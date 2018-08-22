@@ -98,7 +98,9 @@ describe('RestApplication (integration)', () => {
     restApp.static('/', ASSETS);
     await restApp.start();
     client = createRestAppClient(restApp);
-    await client.get('/html/index.html').expect(200);
+    // No more `/html` in client as `restApp.restServer.url` already contains
+    // the base path `/html`
+    await client.get('/index.html').expect(200);
   });
 
   it('honors basePath for routes', async () => {
@@ -110,7 +112,9 @@ describe('RestApplication (integration)', () => {
 
     await restApp.start();
     client = createRestAppClient(restApp);
-    await client.get('/api/status').expect(200, {running: true});
+    // No more `/api` in client as `restApp.restServer.url` already contains
+    // the base path `/api`
+    await client.get('/status').expect(200, {running: true});
   });
 
   it('returns RestServer instance', async () => {
