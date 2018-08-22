@@ -16,17 +16,17 @@
     "strictNullChecks": true,
     "resolveJsonModule": true,
 
-    "lib": ["es2018", "dom", "esnext.asynciterable"],
+    "lib": ["es2017", "dom", "esnext.asynciterable"],
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2017",
     "sourceMap": true,
-    "declaration": true
+    "declaration": true,
+    "rootDir": "src",
+    "outDir": "dist"
   },
   "include": ["src"],
   "exclude": [
-    "node_modules/**",
-    "packages/*/node_modules/**",
     "**/*.d.ts"
   ]
 <% } -%>

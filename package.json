@@ -23,7 +23,7 @@
     "typescript": "^3.3.1"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap && npm run -s update-greenkeeper-json",
+    "postinstall": "lerna bootstrap && node bin/update-project-refs -f && npm run -s update-greenkeeper-json",
     "prerelease": "npm run build:full && npm run mocha && npm run lint",
     "release": "lerna version && lerna publish from-git --yes",
     "update-template-deps": "node bin/update-template-deps -f",
@@ -44,7 +44,9 @@
     "prettier:fix": "npm run prettier:cli -- --write",
     "clean": "lerna run clean && node packages/build/bin/run-clean \"packages/*/dist\" \"examples/*/dist\" \"benchmark/dist\"",
     "clean:lerna": "lerna clean",
-    "build": "node bin/run-lerna run build",
+    "build": "node packages/build/bin/compile-package -b --force && npm run build:resources",
+    "build:resources": "node bin/run-lerna run build:resources -- -s",
+    "build:dev": "node packages/build/bin/compile-package -b && npm run build:resources",
     "build:full": "npm run clean:lerna && npm install && npm run clean && npm run build",
     "pretest": "npm run clean && npm run build",
     "test": "node packages/build/bin/run-nyc npm run mocha --scripts-prepend-node-path",
