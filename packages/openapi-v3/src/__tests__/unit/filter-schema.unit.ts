@@ -12,7 +12,7 @@ describe('filterSchema', () => {
     name: 'my-user-model',
   })
   class MyUserModel extends Entity {
-    @property() id: string;
+    @property({id: true}) id: string;
 
     @property() age: number;
   }
@@ -33,7 +33,7 @@ describe('filterSchema', () => {
           },
         },
         offset: {type: 'integer', minimum: 0},
-        limit: {type: 'integer', minimum: 0},
+        limit: {type: 'integer', minimum: 1},
         skip: {type: 'integer', minimum: 0},
         order: {type: 'array', items: {type: 'string'}},
       },
