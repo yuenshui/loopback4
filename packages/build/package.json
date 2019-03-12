@@ -45,6 +45,6 @@
     "mocha": "node bin/run-mocha --timeout 30000 \"test/integration/*.js\""
   },
   "devDependencies": {
-    "@loopback/tslint-config": "^2.0.0"
+    "@loopback/tslint-config": "^2.0.2"
   }
 }
