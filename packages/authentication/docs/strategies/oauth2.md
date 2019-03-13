@@ -5,6 +5,7 @@ type Credentials = {
   clientId: string;
   clientSecret: string;
   callbackURL: string;
+  scopes: string[];
 }
 
 type TokenAndUser = {
@@ -15,26 +16,28 @@ type TokenAndUser = {
 
 class OAuth2Strategy {
   constructor(
-    @inejct('SERVICES.LOGIN') loginService: LoginService,
-    @inejct('SERVICES.TOKEN') tokenService: TokenService
+    @inject(AuthenticationBindings.SERVICES.LOGIN) loginService: LoginService,
+    @inject(AuthenticationBindings.SERVICES.TOKEN) tokenService: TokenService,
+    @inject(AuthenticationBindings.SERVICES.TRANSPORT) transportService: TransportService,
     // Need confirm is it the correct way to get response object
     @inject(RestBindings.Http.RESPONSE) response: Response,
   )
   // login using this particular strategy
-  authenticate(request, response): Promise<UserProfile | undefined> {
+  login(request, response): Promise<UserProfile | undefined> {
     // Should be an extension point for different extractors
-    const credentials: Credentials = await loginService.extractCredentials(request);
+    // For oauth2 auth the credentials are usually loaded from a local configuration file
+    const credentials: Credentials = await transportService.extractCredentials();
     // if `userProfile` is undefined, it means the verification fails
     const tokenAndUser: TokenAndUser = await loginService.verifyCredentials(credentials);
-
+    const userProfile:UserProfile = await loginService.convertToUserProfile(tokenAndUser);
     // Should be an extension point for different serializers
-    await tokenService.serializeAccessToken(tokenAndUser, response);
-    return tokenAndUser.userProfile;
+    await tokenTransportService.serializeAccessToken(tokenAndUser, response);
+    return userProfile;
   };
 
-  ensureLoggedIn(request) {
+  verify(request) {
     // Should be an extension point for different deserializers
-    const token = await tokenService.extractAccessToken(request);
+    const token = await tokenTransportService.extractAccessToken(request);
     const userProfile = await tokenService.verifyAccessToken(token);
     return userProfile;
   }

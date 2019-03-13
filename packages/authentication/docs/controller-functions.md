@@ -9,7 +9,7 @@ Please note how they are decorated with `@authenticate()`, the syntax is:
 
 ```ts
 class UserController {
-  @post('/login', ...APISpec)
+  @post('/login', APISpec)
   login() {
     // static route
   }
@@ -19,7 +19,7 @@ class UserController {
 
 ```ts
 class UserController {
-  @post('/loginWithFB', ...APISpec)
+  @post('/loginWithFB', APISpec)
   @authenticate('oath2.fb', {action: 'login', session: false})
   loginWithFB() {}
 }
@@ -29,7 +29,7 @@ class UserController {
 
 ```ts
 class UserController {
-  @post('/loginWithGoogle', ...APISpec)
+  @post('/loginWithGoogle', APISpec)
   @authenticate('oath2.google', {action: 'login', session: true})
   loginWithGoogle() {}
 }
@@ -39,7 +39,7 @@ class UserController {
 
 ```ts
 class UserController {
-  @post('/loginWithLocal', ...APISpec)
+  @post('/loginWithLocal', APISpec)
   @authenticate('local', {action: 'login', session: false})
   loginWithLocal() {}
 }
@@ -50,10 +50,10 @@ class UserController {
 ```ts
 class UserController {
   constructor(
-    @inject('CURRENT.USER') user: User;
+    @inject(AuthenticationBindings.CURRENT_USER) user: User;
   )
 
-  @post('/orders', ...APISpec)
+  @post('/orders', APISpec)
   @authenticate('jwt', {action: 'verify'})
   orders() {
     const id = this.user.id;

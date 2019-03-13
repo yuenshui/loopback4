@@ -1,6 +1,8 @@
 ## Multiple Authentication strategies
 
-An authentication system in a LoopBack 4 application could potentially support multiple popular strategies, including basic auth, oauth2, saml, openid-connect, etc...And also allow programmers to either token based or session based approach to track the logged in user.
+An authentication system in a LoopBack 4 application could potentially support multiple popular strategies, including basic auth, oauth2, saml, openid-connect, etc...And also allow programmers to use either a token based or a session based approach to track the logged-in user.
+
+[comment]: # (Can people do a combination of token based and session based auth?)
 
 The diagram below illustrates the high level abstraction of such an extensible authentication system.
 
@@ -8,24 +10,28 @@ The diagram below illustrates the high level abstraction of such an extensible a
 
 Assume the app has a static login page with a list of available choices for users to login:
 
-- local: basic auth with email/username + password, user is stored in a database
+- local: basic auth with email/username + password
 - facebook account: oauth2
 - google account: oauth2
 - ibm intranet account: saml
 - openid account: openid-connect
 - ...
 
-By clicking anyone of the links, you login with a particular account and your status will be tracked in session(session-based auth) or your profile will be encoded into the JWT token(token-based auth).
+For the local login, we retrieve the user from a local database.
 
-A common login flow for all strategies would be: the authentication action verifies the credentials and returns the raw information of that logged in user.
+For the third-party service login, e.g. facebook account login, we retrieve the user info from facebook authorization server using oauth2, then find or create the user in the local database.
 
-Here the raw information refers to the data returned from a third-party service or a persistent database. Therefore You need another step to convert it to a user profile instance which describes your application's user model identically. Finally the user profile is either tracked by a generated token or session + cookie.
+By clicking any one of the links, you login with a particular account and your status will be tracked in a session(with session-based auth), or your profile will be encoded into a JWT token(with token-based auth).
 
-The next diagram illustrates the flow of verifying the client requests sent after the user logged in.
+A common login flow for all strategies would be: the authentication action verifies the credentials and returns the raw information of that logged-in user.
+
+Here the raw information refers to the data returned from a third-party service or a persistent database. Therefore you need another step to convert it to a user profile instance which describes your application's user model. Finally the user profile is either tracked by a generated token or a session + cookie.
+
+The next diagram illustrates the flow of verifying the client requests sent after the user has logged in.
 
 <img src="./docs/imgs/multiple-auth-strategies-verify.png" width="1000px" />
 
-The request goes through the authentication action which decodes/deserializes the user profile from token/session, binds it to the request context so that actions after authenticate could inject it using DI.
+The request goes through the authentication action which decodes/deserializes the user profile from token/session, binds it to the request context so that actions after 'authenticate' could inject it using DI.
 
 Next let's walk through the typical API flow of user login and user verification.
 
@@ -36,14 +42,14 @@ Other than the LoopBack core and its authentication module, there are different 
 The next diagram, using the JWT authentication strategy as an example, draws two API flows: 
 
 - Login: user login with email+password
-- Verify: verify the logged in user
+- Verify: verify the logged-in user
 
 along with the responsibilities divided among different services:
 
-- LoopBack core: resolve a strategy based on the endpoint's corresponding authentication metadata, invoke the authentication action provided as strategy function.
+- LoopBack core: resolve a strategy based on the endpoint's corresponding authentication metadata, invoke the authentication action provided as strategy functions.
 
 - Authentication strategy provider: 
-  - (login flow) verify user credentials and return a token that tracks user.
+  - (login flow) verify user credentials and return a token that tracks the user.
   - (verify flow) verify the token and decode user profile from it.
 
 - Authentication services: some utility services that can be injected in the strategy class. (Each service's functionalities will be covered in the next section)
@@ -57,10 +63,10 @@ The following diagram describes the architecture of the entire authentication fr
 You can check the pseudo code in folder `docs` for:
 
 - [authentication-action](./docs/authentication-action.md)
-- [authentication-strategy](./docs/authentication-action.md)
+- [authentication-strategy](./docs/authentication-strategy.md)
 - [endpoints defined in controller](./docs/controller-functions.md)
-- [jwt strategy](./doc/strategies/jwt.md)
-- [oauth2 strategy](./doc/strategies/oauth2.md)
+- [jwt strategy](./docs/strategies/jwt.md)
+- [oauth2 strategy](./docs/strategies/oauth2.md)
 
 And the abstractions for:
 
@@ -119,7 +125,7 @@ And the abstractions for:
     - set the current user as the return of strategy.verify()
   - strategy:
     - extract session info from cookie(call session service)
-    - serialize user info from session(call session service)
+    - deserialize user info from session(call session service)
     - return user
   - controller function:
     - process the injected user
