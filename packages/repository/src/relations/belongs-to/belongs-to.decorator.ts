@@ -47,6 +47,7 @@ export function belongsTo<T extends Entity>(
       // properties enforced by the decorator
       {
         type: RelationType.belongsTo,
+        targetsMany: false,
         source: decoratedTarget.constructor,
         target: targetResolver,
       },
