@@ -10,7 +10,7 @@ os:
   - osx
 
 script:
-  - npm run postinstall
+  - npm run postci
   - npm run build
   - npm run test:ci
 

@@ -6,7 +6,7 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - node --version
   - npm --version
-  - npm ci
+  - npm run ci
 
 test_script:
   - npm run build
